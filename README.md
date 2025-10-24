@@ -192,3 +192,7 @@ To modify the agent's behavior, you can update the prompt in `src/prompt.py`. Th
 - **Storage Path Issues**: Verify the storage folder exists and has proper read/write permissions
 - **Model Access**: Confirm your account has access to the requested language model
 - **MCP Server**: Ensure the arXiv MCP server can be accessed through `uv` command
+
+## Credits
+
+This project uses the excellent [arxiv-mcp-server](https://github.com/blazickjp/arxiv-mcp-server) by blazickjp for arXiv integration via the Model Context Protocol.
