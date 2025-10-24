@@ -31,9 +31,13 @@ console = Console()
 
 def setup_parser():
     parser = argparse.ArgumentParser(
-        description="Agent CLI with MCP Tools",
+        description="Agent CLI with MCP Tools for arXiv Paper Research",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="Examples:\n  python agent.py\n  python agent.py --model anthropic:claude-3-5-sonnet-latest\n  python agent.py --query 'What is the weather?'"
+        epilog="""Examples:
+  python agent.py
+  python agent.py --model anthropic:claude-3-5-sonnet-latest
+  python agent.py --query 'Find papers on Vision Transformers' --k 5
+  python agent.py --query 'Analyze deep learning trends' --k 3 --verbose"""
     )
     
     parser.add_argument(
@@ -47,6 +51,13 @@ def setup_parser():
         "--query",
         type=str,
         help="Single query to run and exit (optional interactive mode if not provided)"
+    )
+    
+    parser.add_argument(
+        "--k",
+        type=int,
+        default=1,
+        help="Number of papers to download based on the query (default: 1, range: 1-20)"
     )
     
     parser.add_argument(
@@ -89,9 +100,14 @@ def format_message_content(content):
 async def main():
     args = setup_parser()
     
+    # Validate k parameter
+    if args.k < 1 or args.k > 20:
+        console.print("[red]Error:[/red] --k must be between 1 and 20")
+        return
+    
     console.print(
         Panel(
-            "[bold cyan]🤖 Agent CLI with MCP Tools ⛏️[/bold cyan]",
+            "[bold cyan] 🤖 Agent CLI with MCP Tools ⛏️  [/bold cyan]",
             expand=False,
             style="bold blue"
         )
@@ -123,14 +139,20 @@ async def main():
     
     # create agent with tools
     console.print(f"\n[yellow]Initializing agent with model: {args.model}[/yellow]")
+    console.print(f"[yellow]Papers to download per query (k): {args.k}[/yellow]")
+    
+    # Build system prompt with paper limit
+    system_prompt_with_k = f"{PAPER_ANALYSIS_PROMPT}\n\nIMPORTANT: Download exactly {args.k} paper(s) when performing search and analysis tasks."
+    
     with console.status("[bold green]Setting up agent[/bold green]", spinner="dots"):
-        agent = create_agent(args.model, tools, system_prompt=PAPER_ANALYSIS_PROMPT)
+        agent = create_agent(args.model, tools, system_prompt=system_prompt_with_k)
     
     console.print("[green]✓ Agent ready![/green]\n")
     
     # Single query mode
     if args.query:
-        console.print(f"[cyan]Query:[/cyan] {args.query}\n")
+        console.print(f"[cyan]Query:[/cyan] {args.query}")
+        console.print(f"[cyan]Papers to download:[/cyan] {args.k}\n")
         with console.status("[bold green]Processing...[/bold green]", spinner="dots"):
             result = await agent.ainvoke({"messages": [{"role": "user", "content": args.query}]})
         
@@ -152,7 +174,7 @@ async def main():
         return
     
     # Interactive loop mode
-    console.print("[dim]Type 'exit', 'quit', or 'q' to quit • 'help' for commands[/dim]\n")
+    console.print(f"[dim]Papers per query: {args.k} • Type 'exit', 'quit', or 'q' to quit • 'help' for commands[/dim]\n")
     
     while True:
         try:
@@ -163,14 +185,17 @@ async def main():
                 continue
             
             if query.lower() in ['exit', 'quit', 'q']:
-                console.print("[yellow]Goodbye![/yellow]")
+                console.print("[yellow] 🤖 Goodbye![/yellow]")
                 break
             
             if query.lower() == 'help':
                 console.print(Panel(
-                    "[cyan]Commands:[/cyan]\n"
+                    f"[cyan]Commands:[/cyan]\n"
                     "  exit, quit, q  - Exit the application\n"
-                    "  help           - Show this help message",
+                    "  help           - Show this help message\n\n"
+                    f"[cyan]Current Settings:[/cyan]\n"
+                    f"  Model: {args.model}\n"
+                    f"  Papers per query: {args.k}",
                     title="[bold]Help[/bold]",
                     style="blue"
                 ))

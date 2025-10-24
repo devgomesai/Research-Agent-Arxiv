@@ -125,6 +125,15 @@ Other supported models include:
 - `anthropic:claude-3-opus`
 - And more depending on your configuration
 
+### Paper Download Control
+
+Control how many papers are downloaded per query using the `--k` parameter:
+
+```bash
+# Download and analyze 5 papers on the topic
+python -m src.agent --query "Find papers on Vision Transformers" --k 5
+```
+
 ### Additional Options
 
 ```bash
@@ -133,6 +142,9 @@ python -m src.agent --verbose
 
 # Limit number of tools displayed
 python -m src.agent --tools-limit 3
+
+# Number of papers to download per query (default: 1, range: 1-20)
+python -m src.agent --k 5
 
 # Show help
 python -m src.agent --help
@@ -143,9 +155,9 @@ python -m src.agent --help
 ```
 ┌─────────────────┐    ┌──────────────┐    ┌─────────────────┐
 │   User Input    │───▶│ Research     │───▶│   arXiv MCP     │
-│                 │    │ Agent        │    │   Server        │
-│ (Queries)       │    │ (LangChain)  │    │ (Downloads &   │
-└─────────────────┘    └──────────────┘    │  Searches)      │
+│ (Query + k)     │    │ Agent        │    │   Server        │
+│                 │    │ (LangChain)  │    │ (Searches &    │
+└─────────────────┘    └──────────────┘    │  Downloads)     │
                                           └─────────────────┘
                                                     │
                                                     ▼
@@ -156,8 +168,8 @@ python -m src.agent --help
 ```
 
 The system follows this workflow:
-1. **Search**: User request triggers paper search on arXiv
-2. **Download**: Relevant papers are downloaded to the configured storage path
+1. **Search**: User request triggers paper search on arXiv (number of papers to download specified by `k` parameter)
+2. **Download**: Relevant papers (up to `k` count) are downloaded to the configured storage path
 3. **Read**: Paper content is retrieved from local storage
 4. **Analyze**: AI model analyzes and responds to the user's query
 
@@ -170,11 +182,29 @@ The research agent uses the Model Context Protocol (MCP) to interface with the a
 - `read_paper`: Retrieve full content of a downloaded paper
 - `list_papers`: List all locally downloaded papers
 
-The agent follows a strict workflow:
-1. Search for relevant papers based on user input
-2. Download the most relevant paper
-3. Read the paper content
-4. Provide analysis based on user's specific request (summary, detailed analysis, comparison, etc.)
+The agent follows a strict 4-step workflow:
+
+### Step 1: Search for Papers
+- User provides: topic, title, or keywords
+- Agent calls: `search_papers` with user's query
+- Result: List of relevant papers with arXiv IDs
+
+### Step 2: Download Selected Papers
+- Agent calls: `download_paper` with arXiv IDs from search results
+- Result: Papers saved to local storage at the configured path
+
+### Step 3: Read Paper Content
+- Agent calls: `read_paper` to access full content of downloaded papers
+- Result: Full text (title, authors, abstract, body, references)
+
+### Step 4: Perform Analysis
+Based on user's request, the agent provides:
+- **Summary**: 2-3 sentence overview with main contribution and key results
+- **Detailed Analysis**: Executive Summary, Research Context, Methodology, Results, Implications, Future Directions
+- **Comparison**: Analysis of multiple papers with comparison table/summary
+- **Code/Implementation**: Pseudocode and implementation details from papers
+
+The workflow is fully automated - the agent will autonomously complete all steps from search to analysis without requiring arXiv IDs from the user.
 
 ## Storage Management
 
