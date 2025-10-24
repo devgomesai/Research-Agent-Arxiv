@@ -1,0 +1,6 @@
+langchain
+langgraph
+langchain-community
+langchain-mcp-adapters
+ipykernel
+langchain-anthropic
