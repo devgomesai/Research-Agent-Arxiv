@@ -34,10 +34,10 @@ def setup_parser():
         description="Agent CLI with MCP Tools for arXiv Paper Research",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""Examples:
-  python agent.py
-  python agent.py --model anthropic:claude-3-5-sonnet-latest
-  python agent.py --query 'Find papers on Vision Transformers' --k 5
-  python agent.py --query 'Analyze deep learning trends' --k 3 --verbose"""
+  python src/agent.py
+  python src/agent.py --model anthropic:claude-3-5-sonnet-latest
+  python src/agent.py --query 'Find papers on Vision Transformers' --k 5
+  python src/agent.py --query 'Analyze deep learning trends' --k 3 --verbose"""
     )
     
     parser.add_argument(
