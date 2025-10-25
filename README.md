@@ -41,7 +41,7 @@ A sophisticated research agent that interfaces with arXiv to search, download, a
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/devgomesai/Research-Agent-Arxiv.git
 cd research-agent
 
 # Create a virtual environment
