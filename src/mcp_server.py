@@ -13,7 +13,7 @@ async def mcp_client():
                 "run",
                 "arxiv-mcp-server",
                 "--storage-path",
-                "C:/arxiv_storage/",
+                "C:/arxiv_storage/", # Create a folder named as arxiv_storage in C drive
             ],
         }
     })
