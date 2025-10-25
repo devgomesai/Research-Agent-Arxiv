@@ -56,7 +56,7 @@ def setup_parser():
     parser.add_argument(
         "--k",
         type=int,
-        default=1,
+        default=2,
         help="Number of papers to download based on the query (default: 1, range: 1-20)"
     )
     
