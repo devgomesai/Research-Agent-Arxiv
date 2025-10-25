@@ -155,10 +155,10 @@ python -m src.agent --help
 ```
 ┌─────────────────┐    ┌──────────────┐    ┌─────────────────┐
 │   User Input    │───▶│ Research     │───▶│   arXiv MCP     │
-│ (Query + k)     │    │ Agent        │    │   Server        │
-│                 │    │ (LangChain)  │    │ (Searches &    │
+│ (Query + k)     │    │   Agent      │    │   Server        │
+│                 │    │              │    │ (Searches &     │
 └─────────────────┘    └──────────────┘    │  Downloads)     │
-                                          └─────────────────┘
+                                           └─────────────────┘
                                                     │
                                                     ▼
                                           ┌─────────────────┐
