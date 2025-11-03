@@ -107,7 +107,7 @@ async def main():
     
     console.print(
         Panel(
-            "[bold cyan] 🤖 Agent CLI with MCP Tools ⛏️  [/bold cyan]",
+            "[bold cyan] 🧠 Research Agent [arXiv] with MCP Tools ⛏️  [/bold cyan]",
             expand=False,
             style="bold blue"
         )
@@ -129,7 +129,7 @@ async def main():
         
         for tool in tools[:args.tools_limit]:
             name = getattr(tool, 'name', 'Unknown')
-            desc = getattr(tool, 'description', 'No description')[:50]
+            desc = getattr(tool, 'description', 'No description')
             table.add_row(name, desc)
         
         if len(tools) > args.tools_limit:
